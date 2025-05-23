@@ -7,11 +7,11 @@ part 'table_calendar_event_provider.g.dart';
 class TableCalendarEventController extends _$TableCalendarEventController {
   final List<Event> sampleEvents = [
     Event(
-        title: 'firstEvent', dateTime: DateTime.utc(2024, 2, 15)),
+        title: 'firstEvent', dateTime: DateTime.utc(2025, 5, 15)),
     Event(
       title: 'secondEvent',
       description: 'description',
-      dateTime: DateTime.utc(2024, 2, 15),
+      dateTime: DateTime.utc(2025, 5, 15),
     ),
   ];
 
