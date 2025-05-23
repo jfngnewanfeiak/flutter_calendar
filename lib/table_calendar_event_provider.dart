@@ -7,11 +7,12 @@ part 'table_calendar_event_provider.g.dart';
 class TableCalendarEventController extends _$TableCalendarEventController {
   final List<Event> sampleEvents = [
     Event(
-        title: 'firstEvent', dateTime: DateTime.utc(2025, 5, 15)),
+        title: 'firstEvent', dateTime: DateTime.utc(2025, 5, 15),eventCategory: ["cleanup"]),
     Event(
       title: 'secondEvent',
       description: 'description',
       dateTime: DateTime.utc(2025, 5, 15),
+      eventCategory: ["disaster"],
     ),
   ];
 
@@ -24,8 +25,9 @@ class TableCalendarEventController extends _$TableCalendarEventController {
   void addEvent(
       {required DateTime dateTime,
       required String title,
-      String? description}) {
-    var newData = Event(title: title, description: description, dateTime: dateTime);
+      String? description,
+      required List<String> eventCategory}) {
+    var newData = Event(title: title, description: description, dateTime: dateTime,eventCategory: eventCategory);
     state.add(newData);
   }
 

@@ -5,7 +5,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'event.dart';
 import 'dart:async';
-
+import 'package:textfield_tags/textfield_tags.dart';
+import 'search_events.dart';
 class TableCalendarSample extends HookConsumerWidget {
   const TableCalendarSample({super.key});
 
@@ -14,6 +15,7 @@ class TableCalendarSample extends HookConsumerWidget {
     final focusedDayState = useState(DateTime.now());
     final selectedDayState = useState(DateTime.now());
     final selectedEventsState = useState([]);
+    final tagSelectListState = useState<List<String>>([]);
     final eventProvider = ref.watch(tableCalendarEventControllerProvider);
 
     useEffect(() {
@@ -28,7 +30,22 @@ class TableCalendarSample extends HookConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('カレンダー'),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children:[
+            const Text('カレンダー'),
+            TextButton(
+              onPressed: (){
+                print("牡丹が押された");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder:(context) => SearchEventsPage())
+                  );
+              },
+              child: const SelectableText("イベントを検索",selectionColor: Color(0xFF000000)),
+            )
+          ]
+        )
       ),
       body: Column(
         children: [
@@ -93,10 +110,14 @@ class TableCalendarSample extends HookConsumerWidget {
       BuildContext context, DateTime selectedDay, WidgetRef ref) async {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
+    final _stringTagController = StringTagController();
+    
+    List<String> tag_strings = ["seasonalevents","sports","cleanup","childrenevents","community","disaster"];
 
     await showDialog(
       context: context,
       builder: (context) {
+        List<String> tags_selected = [];
         return Dialog(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -133,6 +154,37 @@ class TableCalendarSample extends HookConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
+                  child: Autocomplete<String>(
+                    optionsBuilder: (TextEditingValue textEditingValue){
+                      if (textEditingValue.text.isEmpty){
+                        return const Iterable<String>.empty();
+                      }
+                      final selectedTags = _stringTagController.getTags ?? [];
+                      return tag_strings.where((String option){
+                        return !selectedTags.contains(option) &&
+                               option
+                               .toLowerCase()
+                               .startsWith(textEditingValue.text.toLowerCase());
+                      });
+                    },
+                    onSelected: (String selectedTag){
+                      // _stringTagController.addTag(selectedTag);
+                      tags_selected.add(selectedTag);
+                    },
+                    fieldViewBuilder: (context, ttec, tfn, onFieldSubmitted){
+                      return TextField(
+                        controller: ttec,
+                        focusNode: tfn,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'タグを入力（候補を選択可能)',
+                        ),
+                      );
+                    },
+                  )
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -151,6 +203,7 @@ class TableCalendarSample extends HookConsumerWidget {
                                 dateTime: selectedDay,
                                 title: titleController.text,
                                 description: descriptionController.text,
+                                eventCategory: tags_selected,
                               );
                           Navigator.pop(context);
                         },

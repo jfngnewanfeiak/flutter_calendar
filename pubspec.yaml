@@ -39,6 +39,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
   hooks_riverpod: ^2.6.1
   riverpod_annotation: ^2.6.1
+  textfield_tags: ^3.0.1
   
 
 dev_dependencies:
