@@ -5,6 +5,7 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'event.dart';
 import 'dart:async';
+
 class TableCalendarSample extends HookConsumerWidget {
   const TableCalendarSample({super.key});
 
@@ -14,53 +15,76 @@ class TableCalendarSample extends HookConsumerWidget {
     final selectedDayState = useState(DateTime.now());
     final selectedEventsState = useState([]);
     final eventProvider = ref.watch(tableCalendarEventControllerProvider);
-    useEffect(() {
-      final timer = Timer.periodic(Duration(seconds: 5), (timer){
-        final allEvents = ref.read(tableCalendarEventControllerProvider);
-        final today = DateTime.now();
 
-        print("現在のイベント: ${ref.read(tableCalendarEventControllerProvider)}");
-        selectedEventsState.value = allEvents.where((event){
-          return isSameDay(event.dateTime, today);
+    useEffect(() {
+      final timer = Timer.periodic(Duration(seconds: 5), (timer) {
+        final allEvents = ref.read(tableCalendarEventControllerProvider);
+        selectedEventsState.value = allEvents.where((event) {
+          return isSameDay(event.dateTime, selectedDayState.value);
         }).toList();
       });
       return timer.cancel;
-    },[]);
+    }, []);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('カレンダー'),
       ),
-      body: TableCalendar(
-        firstDay: DateTime.utc(2010, 1, 1),
-        lastDay: DateTime.utc(2030, 1, 1),
-        focusedDay: DateTime.now(),
-        locale: 'ja_JP',
-        selectedDayPredicate: (day) {
-          return isSameDay(selectedDayState.value, day);
-        },
-        onDaySelected: (selectedDay, focusedDay) {
-          List<Event> selectedEventList = [];
-          for (var event in eventProvider) {
-            if (event.dateTime == selectedDay) {
-              selectedEventList.add(event);
-            }
-          }
-          selectedDayState.value = selectedDay;
-          focusedDayState.value = focusedDay;
-          selectedEventsState.value = selectedEventList;
-        },
-        onDayLongPressed: (selectedDay, focusedDay) async {
-          await showAddEventDialog(context, selectedDay, ref);
-        },
-        eventLoader: (date) {
-          List<Event> selectedEventList = [];
-          for (var event in eventProvider) {
-            if (event.dateTime == date) {
-              selectedEventList.add(event);
-            }
-          }
-          return selectedEventList;
-        },
+      body: Column(
+        children: [
+          TableCalendar(
+            firstDay: DateTime.utc(2010, 1, 1),
+            lastDay: DateTime.utc(2030, 1, 1),
+            focusedDay: DateTime.now(),
+            locale: 'ja_JP',
+            selectedDayPredicate: (day) {
+              return isSameDay(selectedDayState.value, day);
+            },
+            onDaySelected: (selectedDay, focusedDay) {
+              List<Event> selectedEventList = [];
+              for (var event in eventProvider) {
+                if (isSameDay(event.dateTime, selectedDay)) {
+                  selectedEventList.add(event);
+                }
+              }
+              selectedDayState.value = selectedDay;
+              focusedDayState.value = focusedDay;
+              selectedEventsState.value = selectedEventList;
+            },
+            onDayLongPressed: (selectedDay, focusedDay) async {
+              await showAddEventDialog(context, selectedDay, ref);
+            },
+            eventLoader: (date) {
+              return eventProvider.where((event) {
+                return isSameDay(event.dateTime, date);
+              }).toList();
+            },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: selectedEventsState.value.length,
+              itemBuilder: (context, index) {
+                final event = selectedEventsState.value[index];
+                return Card(
+                  child: ListTile(
+                    title: Text(event.title),
+                    subtitle: event.description == null
+                        ? null
+                        : Text(event.description!),
+                    trailing: IconButton(
+                      onPressed: () {
+                        ref
+                            .read(tableCalendarEventControllerProvider.notifier)
+                            .deleteEvent(event: event);
+                      },
+                      icon: const Icon(Icons.delete),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -81,7 +105,10 @@ class TableCalendarSample extends HookConsumerWidget {
               children: [
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('イベントの追加', style: TextStyle(fontSize: 20),),
+                  child: Text(
+                    'イベントの追加',
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -97,8 +124,11 @@ class TableCalendarSample extends HookConsumerWidget {
                     maxLines: 3,
                     controller: descriptionController,
                     decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 40, horizontal: 10),
-                        border: OutlineInputBorder(), hintText: '詳細'),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 40, horizontal: 10),
+                      border: OutlineInputBorder(),
+                      hintText: '詳細',
+                    ),
                   ),
                 ),
                 Padding(
@@ -110,23 +140,19 @@ class TableCalendarSample extends HookConsumerWidget {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: const Text(
-                          'キャンセル',
-                        ),
+                        child: const Text('キャンセル'),
                       ),
                       TextButton(
                         onPressed: () {
                           ref
-                              .read(tableCalendarEventControllerProvider.notifier)
-                              
+                              .read(tableCalendarEventControllerProvider
+                                  .notifier)
                               .addEvent(
-                                  dateTime: selectedDay,
-                                  title: titleController.text,
-                                  description: descriptionController.text);
-     
-
+                                dateTime: selectedDay,
+                                title: titleController.text,
+                                description: descriptionController.text,
+                              );
                           Navigator.pop(context);
-                          
                         },
                         child: const Text(
                           '追加',
