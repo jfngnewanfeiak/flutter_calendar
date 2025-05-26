@@ -18,15 +18,15 @@ class TableCalendarSample extends HookConsumerWidget {
     final tagSelectListState = useState<List<String>>([]);
     final eventProvider = ref.watch(tableCalendarEventControllerProvider);
 
-    useEffect(() {
-      final timer = Timer.periodic(Duration(seconds: 5), (timer) {
-        final allEvents = ref.read(tableCalendarEventControllerProvider);
-        selectedEventsState.value = allEvents.where((event) {
-          return isSameDay(event.dateTime, selectedDayState.value);
-        }).toList();
-      });
-      return timer.cancel;
-    }, []);
+    // useEffect(() {
+    //   final timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    //     final allEvents = ref.read(tableCalendarEventControllerProvider);
+    //     selectedEventsState.value = allEvents.where((event) {
+    //       return isSameDay(event.dateTime, selectedDayState.value);
+    //     }).toList();
+    //   });
+    //   return timer.cancel;
+    // }, []);
 
     return Scaffold(
       appBar: AppBar(
