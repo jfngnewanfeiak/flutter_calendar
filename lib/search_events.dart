@@ -11,7 +11,7 @@ class SearchEventsPage extends HookConsumerWidget {
     final eventProvider = ref.watch(tableCalendarEventControllerProvider);
     final init_events = ref.read(tableCalendarEventControllerProvider);
     // タグとイベントデータ
-    final tags = ["seasonalevents", "sports", "cleanup", "childrenevents", "community", "disaster"];
+    final tags = ["seasonalevents", "sports", "cleanup", "childrenevents", "community", "disaster","clear select all"];
     final events = [
       {"title": "Community Cleanup", "tags": ["cleanup", "community"]},
       {"title": "Local Sports Day", "tags": ["sports", "childrenevents"]},
@@ -29,9 +29,16 @@ class SearchEventsPage extends HookConsumerWidget {
     void filterEvents(String tag) {
       final events_info = ref.read(tableCalendarEventControllerProvider);
       selectedTag.value = tag;
-      filteredEvents.value = events_info.where((event_info){
+      if (tag == "clear select all"){
+        // filteredEvents.value = events_info.EventCategory;
+        filteredEvents.value = events_info;
+
+      }else{
+          filteredEvents.value = events_info.where((event_info){
         return event_info.eventCategory.contains(tag);
       }).toList();
+      }
+      
     }
 
     return Scaffold(
