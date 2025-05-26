@@ -75,7 +75,7 @@ class SearchEventsPage extends HookConsumerWidget {
                         return Card(
                           child: ListTile(
                             title: Text(event?.title ?? "no data title..."),
-                            subtitle: Text("タグ:${event?.description ?? 'no data desctiprion...'}"),
+                            subtitle: Text("詳細:${event?.description ?? 'no data desctiprion...'}"),
                           ),
                         );
                       },
