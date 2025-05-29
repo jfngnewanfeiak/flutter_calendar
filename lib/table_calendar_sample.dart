@@ -109,6 +109,10 @@ class TableCalendarSample extends HookConsumerWidget {
     );
   }
 
+  String listToString(List<String> list) {
+    return list.map<String>((String value) => value.toString()).join(',');
+  }
+  
   Future<void> showAddEventDialog(
       BuildContext context, DateTime selectedDay, WidgetRef ref, ValueNotifier<List<String>> selectedTags, ValueNotifier<bool> isSelected) async {
     final titleController = TextEditingController();
@@ -203,7 +207,10 @@ class TableCalendarSample extends HookConsumerWidget {
                     return Text(tag);
                   }).toList(),
                 ),
-
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(selectedTags.value.map<String>((String value) => value).join(', ')),
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Autocomplete<String>(
