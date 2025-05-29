@@ -88,19 +88,22 @@ class SearchEventsPage extends HookConsumerWidget {
                             title: Text(event?.title ?? "no data title..."),
                             subtitle: Text("詳細:${event?.description ?? 'no data desctiprion...'}"),
                             
-                            leading: ElevatedButton(
-                              
-                              child: Text("詳細を見る"),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children:[
+                            ElevatedButton(
+                              child: Text("詳細"),
                               onPressed: () {
-                                print("詳細ボタンが押された");
+                                print("詳細が押された");
                               },
                             ),
-                            trailing: ElevatedButton(
-                              child: Text("マップを表示"),
+                            ElevatedButton(
+                              child: Text("マップ詳細"),
                               onPressed: () {
-                                print("マップ表示ボタンが押された");
+                                print("マップ詳細が押された");
                               },
-                            ),
+                            )
+                          ]),
                           )
                         );
                         // return Card(
