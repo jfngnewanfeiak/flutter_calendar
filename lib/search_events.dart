@@ -79,13 +79,44 @@ class SearchEventsPage extends HookConsumerWidget {
                       itemCount: filteredEvents.value!.length,
                       itemBuilder: (context, index) {
                         final event = filteredEvents?.value?[index];
-                        return Card(
+                        return Container(
+                          margin: EdgeInsets.fromLTRB(0,0,0,10),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 1),
+                          ),
                           child: ListTile(
                             title: Text(event?.title ?? "no data title..."),
                             subtitle: Text("詳細:${event?.description ?? 'no data desctiprion...'}"),
-                          ),
+                            
+                            leading: ElevatedButton(
+                              
+                              child: Text("詳細を見る"),
+                              onPressed: () {
+                                print("詳細ボタンが押された");
+                              },
+                            ),
+                            trailing: ElevatedButton(
+                              child: Text("マップを表示"),
+                              onPressed: () {
+                                print("マップ表示ボタンが押された");
+                              },
+                            ),
+                          )
                         );
+                        // return Card(
+                        //   child: ListTile(
+                        //     title: Text(event?.title ?? "no data title..."),
+                        //     subtitle: Text("詳細:${event?.description ?? 'no data desctiprion...'}"),
+                        //   ),
+                        //                             // child: ListTile(
+                        //   //   title: Text(event?.title ?? "no data title..."),
+                        //   //   subtitle: Text("詳細:${event?.description ?? 'no data desctiprion...'}"),
+                          
+                        //   // ),
+                        // );
+                        
                       },
+                      
                     ),
             ),
           ],

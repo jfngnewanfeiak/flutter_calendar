@@ -119,6 +119,8 @@ class TableCalendarSample extends HookConsumerWidget {
     final descriptionController = TextEditingController();
     final _stringTagController = StringTagController();
     List<String> tag_strings = ["seasonalevents","sports","cleanup","childrenevents","community","disaster"];
+    List<String> view_select_tags_list = [];
+    String select_tags = "";
     // var selectedTags = <String>[];
     
     await showDialog(
@@ -180,6 +182,7 @@ class TableCalendarSample extends HookConsumerWidget {
                           selectedTags.value.add(tag);
                           tags_selected.add(tag);
                         }
+                        // view_select_tags = selectedTags.value.map<String>((String value) => value).join(', ');
                         // setState(() {});
                         useState((){});
                       },
@@ -209,7 +212,7 @@ class TableCalendarSample extends HookConsumerWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(selectedTags.value.map<String>((String value) => value).join(', ')),
+                  child: Text(selectedTags.value.map<String>((String value) => value).join(', ') ?? "No selected..."),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
