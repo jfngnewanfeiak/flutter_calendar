@@ -6,7 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'event.dart';
 
 class EventDetailViewer extends HookConsumerWidget{
-  final List<Event> event_info;
+  final Event event_info;
   const EventDetailViewer({super.key, required this.event_info});
   
   
@@ -14,7 +14,8 @@ class EventDetailViewer extends HookConsumerWidget{
   Widget build(BuildContext context, WidgetRef ref) {
     final init_events = ref.read(tableCalendarEventControllerProvider);
     // TODO: implement build
-    final Event value;
+    final selectedEventInfo = event_info;
+    print("Selected Event Info: $selectedEventInfo"); 
     
     return Scaffold(
       appBar: AppBar(
@@ -26,13 +27,44 @@ class EventDetailViewer extends HookConsumerWidget{
           decoration: BoxDecoration(
             border: Border.all(width: 1),
           ),
-          child: Row(
-            children: [
-              Text("イベント"),
-              Text("詳細"),
-              Text("時間"),
-              Text("イベントカテゴリ")
+          child: Center(
+            child: Column(
+              spacing: 16,
+              children: [
+              Text(
+                "イベント: ${selectedEventInfo?.title  ??  'no data...'}",
+                style:TextStyle(
+                  fontSize: 64
+                )),
+              Text(
+                "詳細",
+                style: TextStyle(
+                  fontSize: 32
+                ),),
+              Text(
+                selectedEventInfo?.description ?? 'no data...',
+                style: TextStyle(
+                  fontSize: 32
+                ),),
+              Text("時間",
+              style: TextStyle(
+                fontSize: 16
+              ),),
+              Text(selectedEventInfo?.dateTime.toString() ?? 'no data...',
+              style: TextStyle(
+                fontSize: 16
+              ),),
+              Text("イベントカテゴリ",
+              style: TextStyle(
+                fontSize: 16
+              ),),
+              //ここは後でCSV形式みたいな感じにする
+              Text(selectedEventInfo?.eventCategory[0] ?? 'no data...',
+              style: TextStyle(
+                fontSize: 16
+              ),),
             ],
+            ) 
           ),
         ),
       )
