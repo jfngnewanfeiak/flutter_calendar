@@ -17,7 +17,10 @@ class TableCalendarSample extends HookConsumerWidget {
     final selectedEventsState = useState([]);
     final tagSelectListState = useState<List<String>>([]);
     final eventProvider = ref.watch(tableCalendarEventControllerProvider);
-
+    final selectedTags = useState<List<String>>([]);
+    final isSelected = useState<bool>(false);
+    
+    
     // useEffect(() {
     //   final timer = Timer.periodic(Duration(seconds: 5), (timer) {
     //     final allEvents = ref.read(tableCalendarEventControllerProvider);
@@ -69,7 +72,7 @@ class TableCalendarSample extends HookConsumerWidget {
               selectedEventsState.value = selectedEventList;
             },
             onDayLongPressed: (selectedDay, focusedDay) async {
-              await showAddEventDialog(context, selectedDay, ref);
+              await showAddEventDialog(context, selectedDay, ref,selectedTags,isSelected);
             },
             eventLoader: (date) {
               return eventProvider.where((event) {
@@ -106,15 +109,22 @@ class TableCalendarSample extends HookConsumerWidget {
     );
   }
 
+  String listToString(List<String> list) {
+    return list.map<String>((String value) => value.toString()).join(',');
+  }
+  
   Future<void> showAddEventDialog(
-      BuildContext context, DateTime selectedDay, WidgetRef ref) async {
+      BuildContext context, DateTime selectedDay, WidgetRef ref, ValueNotifier<List<String>> selectedTags, ValueNotifier<bool> isSelected) async {
     final titleController = TextEditingController();
     final descriptionController = TextEditingController();
     final _stringTagController = StringTagController();
-    
     List<String> tag_strings = ["seasonalevents","sports","cleanup","childrenevents","community","disaster"];
-
+    List<String> view_select_tags_list = [];
+    String select_tags = "";
+    // var selectedTags = <String>[];
+    
     await showDialog(
+      
       context: context,
       builder: (context) {
         List<String> tags_selected = [];
@@ -151,6 +161,58 @@ class TableCalendarSample extends HookConsumerWidget {
                       hintText: '詳細',
                     ),
                   ),
+                ),
+                Wrap(
+                  runSpacing: 16,
+                  spacing: 16,
+                  children: tag_strings.map((tag){
+                    // final selectedTags = useState<List<String>>([])
+                                      
+
+                    return InkWell(
+                      borderRadius: const BorderRadius.all(Radius.circular(32)),
+                      onTap: (){
+                        // var isSelected = selectedTags.contains(tag);
+                        //tap処理
+                        if (isSelected.value){
+                          // selectedTags.remove(tag);
+                          selectedTags.value.remove(tag);
+                          tags_selected.remove(tag);
+                        }else{
+                          selectedTags.value.add(tag);
+                          tags_selected.add(tag);
+                        }
+                        // view_select_tags = selectedTags.value.map<String>((String value) => value).join(', ');
+                        // setState(() {});
+                        useState((){});
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(32)),
+                          border: Border.all(
+                            width: 2,
+                            color: Colors.pink,
+                          ),
+                          color: isSelected.value ? Colors.pink :null,
+                        ),
+                        child: Text(
+                          tag,
+                          style: TextStyle(
+                            color: isSelected.value ? Colors.white : Colors.pink,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    );
+
+                    return Text(tag);
+                  }).toList(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(selectedTags.value.map<String>((String value) => value).join(', ') ?? "No selected..."),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),

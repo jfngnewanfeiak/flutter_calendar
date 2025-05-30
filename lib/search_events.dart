@@ -1,3 +1,4 @@
+import 'package:calendar_app/event_detail_viewer.dart';
 import 'package:calendar_app/table_calendar_event_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -79,13 +80,52 @@ class SearchEventsPage extends HookConsumerWidget {
                       itemCount: filteredEvents.value!.length,
                       itemBuilder: (context, index) {
                         final event = filteredEvents?.value?[index];
-                        return Card(
+                        return Container(
+                          margin: EdgeInsets.fromLTRB(0,0,0,10),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 1),
+                          ),
                           child: ListTile(
                             title: Text(event?.title ?? "no data title..."),
                             subtitle: Text("詳細:${event?.description ?? 'no data desctiprion...'}"),
-                          ),
+                            
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children:[
+                            ElevatedButton(
+                              child: Text("詳細"),
+                              onPressed: () {
+                                print("詳細が押された");
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => EventDetailViewer(event_info: init_events[index]))
+                                );
+                              },
+                            ),
+                            ElevatedButton(
+                              child: Text("マップ詳細"),
+                              onPressed: () {
+                                print("マップ詳細が押された");
+                                print(index.toString());
+                              },
+                            )
+                          ]),
+                          )
                         );
+                        // return Card(
+                        //   child: ListTile(
+                        //     title: Text(event?.title ?? "no data title..."),
+                        //     subtitle: Text("詳細:${event?.description ?? 'no data desctiprion...'}"),
+                        //   ),
+                        //                             // child: ListTile(
+                        //   //   title: Text(event?.title ?? "no data title..."),
+                        //   //   subtitle: Text("詳細:${event?.description ?? 'no data desctiprion...'}"),
+                          
+                        //   // ),
+                        // );
+                        
                       },
+                      
                     ),
             ),
           ],
